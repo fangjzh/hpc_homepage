@@ -1,0 +1,59 @@
+html,
+body {
+    background-color: rgb(21, 61, 102);
+    color: white;
+    width: 98%;
+    padding: 0;
+    margin: 0;
+}
+
+#header {
+    padding: 5px;
+}
+
+#root {
+    margin: 0;
+    padding: 5px;
+    width: 97%;
+    float: left;
+    margin-left: 10px;
+    background-color: rgb(197, 200, 207);
+    border: 2px solid darkslategray;
+    border-radius: 10px;
+}
+
+#root>div:nth-child(1) {
+    float: left;
+    width: 96%;
+    height: 420px;
+    margin-top: 5px;
+    margin-left: 10px;
+    background-color: rgb(244, 245, 245);
+    border: 2px solid darkslategray;
+    border-radius: 10px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+#root>div:nth-child(2) {
+    float: left;
+    width: 96%;
+    height: 250px;
+    margin-top: 5px;
+    margin-left: 10px;
+    background-color: rgb(244, 245, 245);
+    border: 2px solid darkslategray;
+    border-radius: 10px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+#footer {
+    clear: both;
+    text-align: center;
+    padding: 5px;
+}

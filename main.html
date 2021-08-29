@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>HPC与AI平台</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="Refresh" content="10" ;/>
+    <!--页面每10秒刷新一次-->
+    <link rel="stylesheet" type="text/css" href="mydiv.css">
+    <script src="my.js"></script>
+    <script src="node_modules/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="node_modules/echarts/dist/echarts.js"></script>
+</head>
+
+<body>
+    <div id="header">
+        <!-- <h1>集群运行状况</h1>   -->
+        <img src="./logo.png" width="40%" />
+    </div>
+
+    <!-- 
+    <div id="root">
+           <div>
+            <iframe frameborder=0 scrolling="yes" llowtransparency="yes" src="http://buildhpc.org:3000/d/HPqpm377k/da-mian-ban?orgId=1&refresh=30s&kiosk" width="100%" height="100%"></iframe>
+        </div>
+
+        <div>
+            <iframe frameborder=0 scrolling="yes" llowtransparency="yes" src="http://buildhpc.org:3000/d/HB6LMVVnk/dashboard2?orgId=1&&refresh=30s&kiosk" width="100%" height="100%"></iframe>
+        </div>
+    </div> 
+    -->
+
+
+    <div id="main" style="width: 700px; height: 400px;"></div>
+    <script>
+        $(document).ready(function() {
+            //echarts进行初始化
+            var myChart = echarts.init(document.getElementById("main"));
+            myChart.setOption({
+                //图标题
+                title: {
+                    text: '成绩排序',
+                    textStyle: {
+                        fontSize: 18, //字体大小
+                        color: '#ffffff' //字体颜色
+                    }
+                },
+                //图提示框
+                tootip: {},
+                //图例
+                legend: {
+                    data: ['成绩'],
+                    textStyle: {
+                        fontSize: 18, //字体大小
+                        color: '#ffffff' //字体颜色
+                    }
+                },
+                //y轴属性
+                yAxis: {
+                    data: []
+                },
+                //y轴属性
+                xAxis: {},
+                //图属性
+                series: [{
+                    name: '成绩',
+                    type: 'bar', //图类型：柱状图
+                    color: ['#C0FF3E'], //设置图像颜色
+                    data: [], //图表的数值
+                    textStyle: {
+                        fontSize: 18, //字体大小
+                        color: '#ffffff' //字体颜色
+                    }
+                }]
+            });
+
+            //url 的写法参考promql http api
+            var baseurl = 'http://buildhpc.org:9090/api/v1/query?query=topk(3,sys_w_count)&time=';
+            var timestamp = (new Date().getTime()) / 1000;
+            var promurl = baseurl + timestamp;
+            //var promurl = 'http://buildhpc.org:9090/api/v1/query?query=topk(3,sys_w_count)&time=2021-08-29T15:46:40.781%2B08:00'
+
+            //使用jQuery中的$.getJSON()获取json文件
+            $.getJSON(promurl, function(data) {
+                if (data.status == "success") {
+                    if (data.data.resultType == "vector") {
+                        var nameArray = new Array();
+                        var valArray = new Array();
+                        $.each(data.data.result, function(infoIndex1, info1) {
+                            nameArray.push(info1.metric.name);
+                            valArray.push(info1.value[1]);
+                        });
+                        myChart.setOption({
+                            yAxis: {
+                                data: nameArray.reverse()
+                            },
+                            series: {
+                                name: '成绩',
+                                data: valArray.reverse()
+                            }
+                        });
+                    } else if (data.data.resultType == "matrix") {
+                        var nameArray = new Array();
+                        var valArray = new Array();
+                        var timeMatrix = new Array();
+                        var valMatrix = new Array();
+                        $.each(data.data.result, function(infoIndex1, info1) {
+                            nameArray.push(info1.metric.name);
+                            var timeArrayT = new Array();
+                            var valArrayT = new Array();
+                            $.each(info1.values, function(infoIndex2, info2) {
+                                timeArrayT.push(info2[0]);
+                                valArrayT.push(info2[1]);
+                            });
+                            timeMatrix.push([timeArrayT]);
+                            valMatrix.push([valArrayT]);
+                            valArray.push(valArrayT[0]);
+                        });
+                        myChart.setOption({
+                            yAxis: {
+                                data: nameArray.reverse()
+                            },
+                            series: {
+                                name: '销售',
+                                data: valArray.reverse()
+                            }
+                        });
+                    }
+                }
+            });
+
+        });
+    </script>
+
+    <div id="footer">
+        <p id="demo">最近更新
+            <script>
+                document.write(Date());
+            </script>
+        </p>
+    </div>
+
+</body>
+
+</html>
